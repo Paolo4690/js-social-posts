@@ -56,69 +56,61 @@ const posts = [
     }
 ];
 const idLikePosts = []
-
 const container = document.getElementById('container');
 
 invertData()
 
 // CICLO CHE MI CREA TUTTI I POST IN BASE AGLI ELEMENTI DELL'ARRAY FRAMITE FUNZIONE
 for (let i = 0; i < posts.length; i++) {
-    createPost (posts[i].id, posts[i].content, posts[i].media, posts[i].author.name, posts[i].author.image, posts[i].likes, posts[i].created)
+    createPost (posts[i].id, posts[i].content, posts[i].media, posts[i].author.name, posts[i].author.image, posts[i].likes, posts[i].created, i)
 };
 
-imgNull()
 // CICLO CHE METTE IN ASCOLTO TUTTI GLI ELEMENTI CON UNA CLASSE SPECIFICA
 const btnLike = document.querySelectorAll('.js-like-button')
 for (i = 0; i < btnLike.length; i++) {
     btnLike[i].addEventListener('click', liked)
-    
 }
-
-
-
-
-
-
 
 /* FUNZIONE CHE METTE E RIMUOVE AD OGNI CLICK 
  - IL COLORE TRAMITE UNA CLASSE 
  - AGGIUNGE L'ID DELL'ELEMENTO IN UN ARRAY*/
 function liked() {
     this.classList.toggle('like-button--liked');
-    let z = 0
-    while (z < posts.length){
-        if (this.dataset.postid ==posts[z].id) {
 
-            if (!idLikePosts.includes(this.dataset.postid)){
-                idLikePosts.push(this.dataset.postid)
+    const addLike = this.parentNode.parentNode.querySelector(".js-likes-counter");
+    const y = [...container.children].indexOf(this.parentNode.parentNode.parentNode.parentNode);   
 
-            } else {
-                // idLikePosts.splice(idLikePosts.indexOf(posts[z].id),1);
-            }
+    let myArrClass = [...this.classList]
 
-        }
-
-
-
-
-        z++
+    if(myArrClass.includes("like-button--liked")) {
+        addLike.innerHTML = ++posts[y].likes
+        idLikePosts.push(this.dataset.postid)
+    } else {
+        addLike.innerHTML = --posts[y].likes
+        idLikePosts.splice(idLikePosts.indexOf(posts[y].id), 1); //NON FUNZIONA
     }
-
-    
     console.log(idLikePosts)
-
 }
 
 // FUNZIONE CHE MI CREA POST IN BASE AGLI ARGOMENTI INSERITI
-function createPost(id, content, media, authorName, imageProfile, likes, date) {
-    const post = `
+function createPost(id, content, media, authorName, imageProfile, likes, date, index) {
+
+    let post = `
     <div class="post">
         <div class="post__header">
-            <div class="post-meta">                    
-                <div class="post-meta__icon">
-                    <img class="profile-pic" src="${imageProfile}" alt="${authorName}">                    
-                </div>
-                <div class="post-meta__data">
+            <div class="post-meta">`;
+                
+    if (posts[index].author.image == null){
+        post += `<div class="post-meta__icon profile-pic-default">
+                    <span>${posts[index].author.name.split(" ")[0][0]}${posts[index].author.name.split(" ")[1][0]}</span>
+                </div>`;
+    } else {
+        post += `<div class="post-meta__icon">
+                    <img class="profile-pic" src="${imageProfile}" alt="${authorName}">
+                    </div>`;  
+    }
+            
+    post +=`    <div class="post-meta__data">
                     <div class="post-meta__author">${authorName}</div>
                     <div class="post-meta__time">${date}</div>
                 </div>                    
@@ -146,29 +138,11 @@ function createPost(id, content, media, authorName, imageProfile, likes, date) {
 container.innerHTML += post;
 }
 
-
 // FUNZIONE CHE INVERTE LE DATE DA (aaaa-mm-gg) A (gg-mm-aaaa)
 function invertData () {
     for (i = 0;i < posts.length; i++) {
     let created = posts[i].created
-    created = created[8] + created[9] + created[7] + created[5] + created[6] + created[4] + created[0] + created[1] + created[2] + created[3];
+    created = created.slice(-2) + "/" + created.slice(5, 7) + "/" + created.slice(0, 4);
     posts[i].created = created
-    }
-}
-
-
-// FUNZIONE CHE SOSTITUISCE LE IMG 'NULL' CON LETTERE DEL NOME
-function imgNull () {
-    let eleProfile = document.createElement('div')
-    eleProfile.classList.add('profile-pic-default')
-    console.log(eleProfile)
-    let eleImgAuthor = document.querySelectorAll('.post-meta__icon')
-    for (i = 0; i < posts.length; i++) {
-        
-        if (posts[i].author.image == null){
-            eleImgAuthor[i].innerHTML= ''
-            eleProfile.innerHTML =`<span>${posts[i].author.name.split(" ")[0][0]}${posts[i].author.name.split(" ")[1][0]}</span>`
-            eleImgAuthor[i].append(eleProfile)
-        }
     }
 }
