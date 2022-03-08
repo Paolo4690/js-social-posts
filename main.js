@@ -55,20 +55,26 @@ const posts = [
         "created": "2021-03-05"
     }
 ];
+const idLikePosts = []
 
 const container = document.getElementById('container');
+
+invertData()
+
 
 // CICLO CHE MI CREA TUTTI I POST IN BASE AGLI ELEMENTI DELL'ARRAY FRAMITE FUNZIONE
 for (let i = 0; i < posts.length; i++) {
     createPost (posts[i].id, posts[i].content, posts[i].media, posts[i].author.name, posts[i].author.image, posts[i].likes, posts[i].created)
 };
 
+imgNull()
 // CICLO CHE METTE IN ASCOLTO TUTTI GLI ELEMENTI CON UNA CLASSE SPECIFICA
 const btnLike = document.querySelectorAll('.js-like-button')
 for (i = 0; i < btnLike.length; i++) {
     btnLike[i].addEventListener('click', liked)
+    
+    
 }
-
 
 
 
@@ -79,6 +85,15 @@ for (i = 0; i < btnLike.length; i++) {
 // FUNZIONE CHE MI METTE E RIMUOVE AD OGNI CLICK IL COLORE TRAMITE UNA CLASSE
 function liked() {
     this.classList.toggle('like-button--liked');
+    
+
+    // console.log(data-postid)
+
+
+    // let counterLikes = document.querySelector('.js-likes-counter')
+
+    //     counterLikes.innerHTML = posts[i].likes++
+    //     console.log(parseInt(posts[i].likes))
 }
 
 // FUNZIONE CHE MI CREA POST IN BASE AGLI ARGOMENTI INSERITI
@@ -103,7 +118,7 @@ function createPost(id, content, media, authorName, imageProfile, likes, date) {
         <div class="post__footer">
             <div class="likes js-likes">
                 <div class="likes__cta">
-                    <a class="like-button  js-like-button" href="#${id}" data-postid="${id}">
+                    <a class="like-button  js-like-button" href="#post-${id}" data-postid="${id}">
                         <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
                         <span class="like-button__label">Mi Piace</span>
                     </a>
@@ -116,4 +131,23 @@ function createPost(id, content, media, authorName, imageProfile, likes, date) {
     </div>
 `;
 container.innerHTML += post;
+}
+
+// FUNZIONE CHE INVERTE LE DATE DA (aaaa-mm-gg) A (gg-mm-aaaa)
+function invertData () {
+    for (i = 0;i < posts.length; i++) {
+    let created = posts[i].created
+    created = created[8] + created[9] + created[7] + created[5] + created[6] + created[4] + created[0] + created[1] + created[2] + created[3];
+    posts[i].created = created
+    }
+}
+
+function imgNull () {
+    let eleImgAuthor = document.querySelectorAll('.post-meta__icon')
+    for (i = 0; i < posts.length; i++) {
+        
+        if (posts[i].author.image == null){
+            eleImgAuthor[i].innerHTML = posts[i].author.name[0] + posts[i].author.name[5]
+        }
+    }
 }
